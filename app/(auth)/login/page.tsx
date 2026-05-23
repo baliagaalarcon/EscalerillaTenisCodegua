@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LoginPage() {
+// Componente interno que usa useSearchParams (debe estar dentro de Suspense)
+function LoginForm() {
   const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -33,6 +34,49 @@ export default function LoginPage() {
   }
 
   return (
+    <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Email
+        </label>
+        <input
+          type="email"
+          className="input"
+          placeholder="tu@email.com"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Contraseña
+        </label>
+        <input
+          type="password"
+          className="input"
+          placeholder="••••••••"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+        />
+      </div>
+
+      {error && (
+        <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+      )}
+
+      <button type="submit" className="btn-primary w-full" disabled={loading}>
+        {loading ? 'Entrando...' : 'Entrar'}
+      </button>
+    </form>
+  )
+}
+
+// Página principal — envuelve el formulario en Suspense (requerido por Next.js 14)
+export default function LoginPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm">
         {/* Logo / Header */}
@@ -44,44 +88,9 @@ export default function LoginPage() {
           <p className="text-gray-500 text-sm mt-1">Escalerilla 2025</p>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              className="input"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              className="input"
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
-          )}
-
-          <button type="submit" className="btn-primary w-full" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
+        <Suspense fallback={<div className="bg-white rounded-2xl border border-gray-100 p-6 text-center text-gray-400">Cargando...</div>}>
+          <LoginForm />
+        </Suspense>
 
         <p className="text-center text-xs text-gray-400 mt-6">
           ¿No tienes cuenta? Contacta a la directiva del club.
