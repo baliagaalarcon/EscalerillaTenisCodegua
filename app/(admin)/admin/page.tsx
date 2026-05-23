@@ -6,11 +6,12 @@ export const metadata = { title: 'Admin — Escalerilla Codegua' }
 export default async function AdminDashboard() {
   const supabase = await createClient()
 
-  const { data: temporada } = await supabase
+  const tempResult = await supabase
     .from('temporadas')
     .select('id, nombre, fecha_fin')
     .eq('estado', 'activa')
     .single()
+  const temporada = tempResult.data as { id: number; nombre: string; fecha_fin: string } | null
 
   const temporadaId = temporada?.id ?? 0
 
