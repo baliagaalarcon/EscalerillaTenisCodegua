@@ -18,11 +18,12 @@ export default async function AdminLayout({
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: usuario } = await supabase
+  const result = await supabase
     .from('usuarios')
     .select('nombre, apellido')
     .eq('auth_id', user!.id)
     .single()
+  const usuario = result.data as { nombre: string; apellido: string } | null
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
