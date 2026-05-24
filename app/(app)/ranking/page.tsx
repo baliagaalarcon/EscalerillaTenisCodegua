@@ -11,11 +11,11 @@ export default async function RankingPage() {
 
   // Obtener usuario actual
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: usuarioActual } = await supabase
+  const { data: usuarioActual } = user ? await supabase
     .from('usuarios')
     .select('id')
-    .eq('auth_id', user!.id)
-    .single()
+    .eq('auth_id', user.id)
+    .single() : { data: null }
 
   // Temporada activa
   const { data: temporada } = await supabase
