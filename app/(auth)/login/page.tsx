@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { loginAction } from '@/app/actions/auth'
 
 // Componente interno que usa useSearchParams (debe estar dentro de Suspense)
 function LoginForm() {
@@ -19,21 +20,15 @@ function LoginForm() {
     setLoading(true)
     setError(null)
 
-    // Login vía servidor para que las cookies queden seteadas antes de navegar
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
+    // Server action: login ocurre en el servidor, las cookies se setean
+    // antes del redirect — el middleware siempre reconoce la sesión
+    const result = await loginAction(email, password, redirectTo)
 
-    if (!res.ok) {
-      setError('Email o contraseña incorrectos')
+    if (result?.error) {
+      setError(result.error)
       setLoading(false)
-      return
     }
-
-    // Full reload: el browser envía las cookies recién seteadas al servidor
-    window.location.href = redirectTo
+    // Si no hay error, el server action hace redirect() automáticamente
   }
 
   return (
