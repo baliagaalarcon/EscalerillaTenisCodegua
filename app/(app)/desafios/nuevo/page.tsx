@@ -2,7 +2,6 @@
 // Muestra solo los jugadores que el usuario PUEDE desafiar (reglas 1, 2, 15)
 import { createClient } from '@/lib/supabase/server'
 import NuevoDesafioForm from '@/components/desafios/NuevoDesafioForm'
-import type { RankingJugador } from '@/lib/types/database.types'
 
 export const metadata = { title: 'Nuevo Desafío — Escalerilla Codegua' }
 
@@ -65,7 +64,8 @@ export default async function NuevoDesafioPage() {
       <NuevoDesafioForm
         desafianteId={usuarioActual?.id ?? ''}
         temporadaId={temporada?.id ?? 0}
-        jugadoresElegibles={jugablesRaw as RankingJugador[]}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        jugadoresElegibles={jugablesRaw as any[]}
         habilitado={
           usuarioActual?.cuotas_al_dia === true &&
           usuarioActual?.estado === 'activo' &&

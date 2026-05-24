@@ -1,6 +1,17 @@
 // Utilidades para lógica de negocio del ranking
 
-import type { EstadoDesafio, TendenciaRanking } from '@/lib/types/database.types'
+export type EstadoDesafio =
+  | 'pendiente_registro'
+  | 'activo'
+  | 'horario_propuesto'
+  | 'confirmado'
+  | 'jugado'
+  | 'cancelado_mutuo'
+  | 'wo_desafiante'
+  | 'wo_desafiado'
+  | 'nulo'
+
+export type TendenciaRanking = 'subio' | 'bajo' | 'igual'
 
 // Devuelve el emoji/ícono de tendencia para la UI
 export function iconoTendencia(tendencia: TendenciaRanking): string {

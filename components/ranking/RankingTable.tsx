@@ -2,7 +2,21 @@
 
 import Link from 'next/link'
 import { iconoTendencia } from '@/lib/utils/ranking'
-import type { RankingJugador } from '@/lib/types/database.types'
+import type { TendenciaRanking } from '@/lib/utils/ranking'
+
+interface RankingJugador {
+  usuario_id: string
+  posicion: number
+  nombre: string
+  apellido: string
+  foto_url: string | null
+  grupo_nombre: string
+  grupo_color: string
+  tendencia: TendenciaRanking
+  tiene_desafio_activo: boolean
+  cuotas_al_dia: boolean
+  estado_jugador: string | null
+}
 
 interface Props {
   jugadores: RankingJugador[]
@@ -30,7 +44,7 @@ export default function RankingTable({ jugadores, usuarioActualId }: Props) {
             <Link href={`/perfil/${j.usuario_id}`}>
               <div
                 className={`ranking-row ${esMiPosicion ? 'ring-2 ring-sky-400 ring-inset' : ''}`}
-                style={{ backgroundColor: `${j.grupo_color}22` }} // color con 13% opacidad
+                style={{ backgroundColor: `${j.grupo_color}22` }}
               >
                 {/* Posición */}
                 <div

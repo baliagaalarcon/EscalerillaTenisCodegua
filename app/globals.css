@@ -2,51 +2,162 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --color-primary: #0ea5e9;   /* sky-500 */
-    --color-success: #16a34a;   /* green-600 */
-    --color-danger:  #dc2626;   /* red-600 */
-    --color-warning: #d97706;   /* amber-600 */
-  }
+/* ── Design tokens — Club Tenis Codegua ──────────────────────────── */
+:root {
+  --court:      oklch(0.30 0.045 155);
+  --court-2:    oklch(0.36 0.055 155);
+  --court-3:    oklch(0.22 0.035 155);
+  --ink:        oklch(0.18 0.02 150);
+  --ink-2:      oklch(0.42 0.015 150);
+  --ink-3:      oklch(0.60 0.012 150);
+  --paper:      oklch(0.985 0.004 100);
+  --paper-2:    oklch(0.96 0.006 100);
+  --line:       oklch(0.90 0.008 130);
+  --line-2:     oklch(0.94 0.006 130);
+  --clay:       oklch(0.62 0.13 40);
+  --clay-soft:  oklch(0.93 0.04 40);
+  --net:        oklch(0.55 0.08 235);
+  --net-soft:   oklch(0.94 0.025 235);
+  --danger:     oklch(0.55 0.18 25);
 }
 
-@layer components {
-  /* Tarjeta de ranking con color del grupo */
-  .ranking-row {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg border border-transparent
-           hover:border-gray-200 transition-colors;
-  }
+/* ── Typography ──────────────────────────────────────────────────── */
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-family: var(--font-manrope, 'Manrope', system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+.font-display {
+  font-family: var(--font-bricolage, 'Bricolage Grotesque', 'Manrope', sans-serif);
+  letter-spacing: -0.02em;
+}
+.font-mono {
+  font-family: var(--font-jetbrains, 'JetBrains Mono', ui-monospace, monospace) !important;
+  font-feature-settings: 'tnum';
+}
 
-  /* Badge de posición */
-  .posicion-badge {
-    @apply w-8 h-8 rounded-full flex items-center justify-center
-           text-sm font-bold text-white bg-gray-700 shrink-0;
-  }
+/* ── Utility classes from design ─────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
 
-  /* Botón primario */
-  .btn-primary {
-    @apply bg-sky-500 text-white px-4 py-2 rounded-lg font-medium
-           hover:bg-sky-600 active:bg-sky-700 transition-colors
-           disabled:opacity-50 disabled:cursor-not-allowed;
-  }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  transition: transform .08s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
 
-  /* Botón secundario */
-  .btn-secondary {
-    @apply bg-white text-gray-700 px-4 py-2 rounded-lg font-medium border border-gray-300
-           hover:bg-gray-50 active:bg-gray-100 transition-colors
-           disabled:opacity-50 disabled:cursor-not-allowed;
-  }
+.btn-primary {
+  background: var(--clay);
+  color: white;
+  box-shadow: 0 1px 0 oklch(0.50 0.13 40) inset, 0 1px 2px oklch(0.30 0.05 40 / 0.25);
+}
+.btn-primary:hover:not(:disabled) { background: oklch(0.58 0.135 40); }
+.btn-primary:disabled {
+  background: var(--paper-2);
+  color: var(--ink-3);
+  box-shadow: inset 0 0 0 1px var(--line);
+  cursor: not-allowed;
+}
 
-  /* Input de formulario */
-  .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
-           focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent
-           disabled:bg-gray-50 disabled:text-gray-500;
-  }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.btn-ghost:hover { background: var(--paper); color: var(--ink); }
 
-  /* Badge de estado */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-  }
+.btn-dark {
+  background: var(--court);
+  color: white;
+}
+.btn-dark:hover:not(:disabled) { background: var(--court-2); }
+
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: oklch(0.18 0.02 150 / 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fade .15s ease both;
+}
+@media (min-width: 640px) {
+  .scrim { align-items: center; }
+}
+
+.sheet {
+  animation: rise .22s cubic-bezier(.2,.9,.3,1) both;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* ── Descenso flash ──────────────────────────────────────────────── */
+@keyframes descender {
+  0%   { background: oklch(0.94 0.08 25); }
+  100% { background: transparent; }
+}
+.descender { animation: descender 1.4s ease both; }
+
+/* ── Input base ──────────────────────────────────────────────────── */
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+}
+.input:focus {
+  border-color: var(--court);
+  box-shadow: 0 0 0 3px oklch(0.30 0.045 155 / 0.12);
 }

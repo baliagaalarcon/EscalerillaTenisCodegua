@@ -3,7 +3,17 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import type { RankingJugador } from '@/lib/types/database.types'
+
+interface RankingJugador {
+  usuario_id: string
+  posicion: number
+  nombre: string
+  apellido: string
+  foto_url: string | null
+  grupo_nombre: string
+  grupo_color: string
+  cuotas_al_dia: boolean
+}
 
 interface Props {
   desafianteId: string
@@ -25,14 +35,12 @@ export default function NuevoDesafioForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Validar en el cliente antes de enviar (la función SQL lo valida también en el servidor)
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!desafiadoId) return
     setLoading(true)
     setError(null)
 
-    // Verificación final con la función SQL (reglas 1, 2, 15)
     const { data: validacion } = await supabase.rpc('fn_puede_desafiar', {
       p_desafiante_id: desafianteId,
       p_desafiado_id:  desafiadoId,
@@ -45,20 +53,16 @@ export default function NuevoDesafioForm({
       return
     }
 
-    // Posiciones snapshot
-    const desafiante = jugadoresElegibles[0] // mi posición no está en la lista, buscarla aparte
     const desafiado = jugadoresElegibles.find(j => j.usuario_id === desafiadoId)
 
-    // Crear el desafío
     const { error: insertError } = await supabase.from('desafios').insert({
       temporada_id:                   temporadaId,
       desafiante_id:                  desafianteId,
       desafiado_id:                   desafiadoId,
-      posicion_desafiante_snapshot:   0, // El backend lo puede rellenar con un trigger
+      posicion_desafiante_snapshot:   0,
       posicion_desafiado_snapshot:    desafiado?.posicion ?? 0,
       estado:                         'pendiente_registro',
       fecha_desafio:                  new Date().toISOString(),
-      // +24 hrs para registrar ante la comisión (regla 10)
       fecha_limite_registro:          new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       notas: notas || null,
     })
@@ -86,7 +90,6 @@ export default function NuevoDesafioForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Selector de rival */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Selecciona a quién desafiar
@@ -102,9 +105,7 @@ export default function NuevoDesafioForm({
             {jugadoresElegibles.map(j => (
               <label
                 key={j.usuario_id}
-                className={`flex items-center gap-3 px-4 py-3 cursor-pointer
-                            transition-colors hover:bg-gray-50
-                            ${desafiadoId === j.usuario_id ? 'bg-sky-50 border-l-4 border-sky-400' : ''}`}
+                className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-gray-50 ${desafiadoId === j.usuario_id ? 'bg-sky-50 border-l-4 border-sky-400' : ''}`}
               >
                 <input
                   type="radio"
@@ -115,8 +116,7 @@ export default function NuevoDesafioForm({
                   className="text-sky-500"
                 />
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs
-                              font-bold text-white shrink-0"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                   style={{ backgroundColor: j.grupo_color }}
                 >
                   {j.posicion}
@@ -133,7 +133,6 @@ export default function NuevoDesafioForm({
         )}
       </div>
 
-      {/* Notas opcionales */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Notas (opcional)
@@ -147,7 +146,6 @@ export default function NuevoDesafioForm({
         />
       </div>
 
-      {/* Info de plazos */}
       <div className="bg-blue-50 rounded-xl px-4 py-3 text-xs text-blue-700 space-y-1">
         <p>⏱ Tienes <strong>24 horas</strong> para notificar a la comisión (regla 10)</p>
         <p>📅 El partido debe jugarse en un máximo de <strong>5 días</strong> (regla 6/7)</p>
