@@ -3,11 +3,9 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 
 // Componente interno que usa useSearchParams (debe estar dentro de Suspense)
 function LoginForm() {
-  const supabase = createClient()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? '/ranking'
 
@@ -21,15 +19,20 @@ function LoginForm() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    // Login vía servidor para que las cookies queden seteadas antes de navegar
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-    if (error) {
+    if (!res.ok) {
       setError('Email o contraseña incorrectos')
       setLoading(false)
       return
     }
 
-    // Hard redirect para que el servidor lea las cookies de Supabase correctamente
+    // Full reload: el browser envía las cookies recién seteadas al servidor
     window.location.href = redirectTo
   }
 
