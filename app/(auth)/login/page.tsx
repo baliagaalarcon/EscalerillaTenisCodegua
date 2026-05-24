@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 // Componente interno que usa useSearchParams (debe estar dentro de Suspense)
@@ -70,6 +71,12 @@ function LoginForm() {
       <button type="submit" className="btn-primary w-full" disabled={loading}>
         {loading ? 'Entrando...' : 'Entrar'}
       </button>
+
+      <div className="text-center">
+        <Link href="/forgot-password" className="text-sm text-sky-600 hover:underline">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </div>
     </form>
   )
 }
