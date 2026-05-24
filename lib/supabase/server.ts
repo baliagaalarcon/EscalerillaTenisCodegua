@@ -1,6 +1,7 @@
 // Cliente de Supabase para usar en SERVER COMPONENTS y Route Handlers
 // NO usar en componentes con 'use client'
-import { createServerClient } from '@supabase/ssr'
+// @supabase/ssr v0.3.x usa la API get/set/remove (no getAll/setAll)
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/types/database.types'
 
@@ -12,16 +13,21 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
+        get(name: string) {
+          return cookieStore.get(name)?.value
         },
-        setAll(cookiesToSet) {
+        set(name: string, value: string, options: CookieOptions) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
+            cookieStore.set({ name, value, ...options })
           } catch {
-            // setAll puede fallar en Server Components de solo lectura (es esperado)
+            // Falla silenciosamente en Server Components de solo lectura
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options })
+          } catch {
+            // Falla silenciosamente en Server Components de solo lectura
           }
         },
       },
@@ -36,7 +42,11 @@ export function createAdminClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: { getAll: () => [], setAll: () => {} },
+      cookies: {
+        get: () => undefined,
+        set: () => {},
+        remove: () => {},
+      },
       auth: { persistSession: false },
     }
   )

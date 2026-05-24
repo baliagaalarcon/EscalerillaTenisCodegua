@@ -1,8 +1,5 @@
-// Login via Route Handler: el método más confiable para Supabase SSR.
-// El cliente crea el supabase server client, setea las cookies en la respuesta HTTP
-// directamente, y hace redirect. El browser recibe las cookies en el mismo redirect
-// y las envía al middleware en la siguiente request.
-import { createServerClient } from '@supabase/ssr'
+// Login via Route Handler con la API correcta de @supabase/ssr v0.3.x (get/set/remove)
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -11,7 +8,7 @@ export async function POST(request: NextRequest) {
   const password = formData.get('password') as string
   const redirectTo = (formData.get('redirectTo') as string) || '/ranking'
 
-  // 303 See Other: convierte POST → GET en el redirect (evita HTTP 405)
+  // 303 convierte POST → GET en el redirect
   const successResponse = NextResponse.redirect(new URL(redirectTo, request.url), { status: 303 })
 
   const supabase = createServerClient(
@@ -19,14 +16,15 @@ export async function POST(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
+        get(name: string) {
+          return request.cookies.get(name)?.value
         },
-        setAll(cookiesToSet) {
-          // Seteamos las cookies directamente en el objeto de redirect response
-          cookiesToSet.forEach(({ name, value, options }) =>
-            successResponse.cookies.set(name, value, options)
-          )
+        set(name: string, value: string, options: CookieOptions) {
+          // Setear directamente en el redirect response
+          successResponse.cookies.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          successResponse.cookies.set({ name, value: '', ...options })
         },
       },
     }
