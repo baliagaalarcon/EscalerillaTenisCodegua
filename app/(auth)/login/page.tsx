@@ -1,14 +1,13 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 // Componente interno que usa useSearchParams (debe estar dentro de Suspense)
 function LoginForm() {
   const supabase = createClient()
-  const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? '/ranking'
 
@@ -30,7 +29,8 @@ function LoginForm() {
       return
     }
 
-    router.push(redirectTo)
+    // Hard redirect para que el servidor lea las cookies de Supabase correctamente
+    window.location.href = redirectTo
   }
 
   return (
