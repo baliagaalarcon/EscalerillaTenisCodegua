@@ -103,7 +103,7 @@ function Avatar({ name, size = 36, tier, paused, photo }: {
   }
   return (
     <div
-      className="rounded-full flex items-center justify-center font-semibold shrink-0 select-none"
+      className="rounded-full flex items-center justify-center font-display font-semibold shrink-0 select-none"
       style={{
         width: size, height: size,
         background: m.soft, color: m.text,
@@ -1150,7 +1150,7 @@ function HeroHeader({ me, temporadaNombre }: { me: PlayerRow | null; temporadaNo
   const firstName = me?.nombre.split(' ')[0] ?? ''
   return (
     <header className="court-bg relative overflow-hidden text-white">
-      <div className="relative max-w-2xl mx-auto px-4 pt-5 pb-6">
+      <div className="relative max-w-[480px] mx-auto px-4 pt-5 pb-6">
         {/* Club brand */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2.5">
@@ -1316,7 +1316,7 @@ export default function RankingApp({ players: initial, challenges: initialChalle
   return (
     <>
       <HeroHeader me={me} temporadaNombre={temporadaNombre} />
-      <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+      <div className="max-w-[480px] mx-auto px-4 pt-4 pb-0 space-y-4">
       <MyStatusCard
         me={me}
         myChallenge={myChallenge}

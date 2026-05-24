@@ -14,35 +14,44 @@ export default function NavBar({ usuario }: NavBarProps) {
 
   const items = [
     { href: '/ranking',  label: 'Ranking',  Icon: Trophy  },
-    { href: '/desafios', label: 'Desafios', Icon: Swords  },
+    { href: '/desafios', label: 'Desafíos', Icon: Swords  },
     ...(isAdmin ? [{ href: '/admin', label: 'Admin', Icon: Shield }] : []),
     { href: `/perfil/${usuario?.id}`, label: 'Perfil', Icon: User },
   ]
 
   return (
-    <nav
-      className="fixed bottom-0 inset-x-0 z-40 flex items-center justify-around px-2 h-16"
-      style={{ background: 'white', borderTop: '1px solid var(--line)', paddingBottom: 'env(safe-area-inset-bottom)' }}
-    >
-      {items.map(item => {
-        const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl min-w-0 transition-colors"
-            style={{ color: active ? 'var(--court)' : 'var(--ink-3)' }}
-          >
-            <item.Icon size={20} strokeWidth={active ? 2.5 : 1.8} />
-            <span
-              className="text-[10px] font-mono uppercase tracking-[0.12em] truncate"
-              style={{ fontWeight: active ? 700 : 500 }}
-            >
-              {item.label}
-            </span>
-          </Link>
-        )
-      })}
+    <nav className="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
+      <div
+        className="max-w-[480px] mx-auto px-4 pb-4 pt-2 pointer-events-auto"
+        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+      >
+        <div
+          className="rounded-2xl border flex items-stretch p-1.5 gap-1"
+          style={{
+            background: 'white',
+            borderColor: 'var(--line)',
+            boxShadow: '0 8px 24px oklch(0.20 0.02 150 / 0.08)',
+          }}
+        >
+          {items.map(item => {
+            const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl transition-colors"
+                style={{
+                  background: active ? 'var(--court)' : 'transparent',
+                  color: active ? 'white' : 'var(--ink-2)',
+                }}
+              >
+                <item.Icon size={16} strokeWidth={active ? 2.4 : 1.8} />
+                <span className="text-[13px] font-semibold leading-none">{item.label}</span>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
     </nav>
   )
 }
