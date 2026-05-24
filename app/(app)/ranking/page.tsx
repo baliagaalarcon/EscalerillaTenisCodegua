@@ -115,18 +115,13 @@ export default async function RankingPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-4">
-      <div className="mb-4">
-        <h1 className="font-display text-[22px] font-bold" style={{ color: 'var(--ink)' }}>Escalerilla</h1>
-        <p className="text-[13px] font-mono mt-0.5" style={{ color: 'var(--ink-3)' }}>{temporada.nombre}</p>
-      </div>
-      <RankingApp
-        players={allPlayers}
-        challenges={challenges}
-        meId={yo?.id ?? ''}
-        notices={notices}
-        temporadaId={temporada.id}
-      />
-    </div>
+    <RankingApp
+      players={allPlayers}
+      challenges={challenges}
+      meId={yo?.id ?? ''}
+      notices={notices}
+      temporadaId={temporada.id}
+      temporadaNombre={temporada.nombre}
+    />
   )
 }
