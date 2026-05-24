@@ -4,21 +4,29 @@
 
 /* ── Design tokens — Club Tenis Codegua ──────────────────────────── */
 :root {
-  --court:      oklch(0.30 0.045 155);
-  --court-2:    oklch(0.36 0.055 155);
-  --court-3:    oklch(0.22 0.035 155);
-  --ink:        oklch(0.18 0.02 150);
-  --ink-2:      oklch(0.42 0.015 150);
-  --ink-3:      oklch(0.60 0.012 150);
-  --paper:      oklch(0.985 0.004 100);
-  --paper-2:    oklch(0.96 0.006 100);
-  --line:       oklch(0.90 0.008 130);
-  --line-2:     oklch(0.94 0.006 130);
-  --clay:       oklch(0.62 0.13 40);
-  --clay-soft:  oklch(0.93 0.04 40);
-  --net:        oklch(0.55 0.08 235);
-  --net-soft:   oklch(0.94 0.025 235);
-  --danger:     oklch(0.55 0.18 25);
+  --court:       oklch(0.30 0.045 155);
+  --court-2:     oklch(0.36 0.055 155);
+  --court-3:     oklch(0.22 0.035 155);
+  --ink:         oklch(0.18 0.02 150);
+  --ink-2:       oklch(0.42 0.015 150);
+  --ink-3:       oklch(0.60 0.012 150);
+  --paper:       oklch(0.985 0.004 100);
+  --paper-2:     oklch(0.96 0.006 100);
+  --line:        oklch(0.90 0.008 130);
+  --line-2:      oklch(0.94 0.006 130);
+  --clay:        oklch(0.62 0.13 40);
+  --clay-soft:   oklch(0.93 0.04 40);
+  --net:         oklch(0.55 0.08 235);
+  --net-soft:    oklch(0.94 0.025 235);
+  --danger:      oklch(0.55 0.18 25);
+
+  /* Podio / trofeos */
+  --oro:         oklch(0.74 0.12 85);
+  --oro-soft:    oklch(0.96 0.045 90);
+  --plata:       oklch(0.66 0.012 240);
+  --plata-soft:  oklch(0.95 0.005 240);
+  --bronce:      oklch(0.55 0.09 50);
+  --bronce-soft: oklch(0.94 0.03 55);
 }
 
 /* ── Typography ──────────────────────────────────────────────────── */
@@ -28,6 +36,7 @@ body {
   background: var(--paper-2);
   color: var(--ink);
   font-family: var(--font-manrope, 'Manrope', system-ui, sans-serif);
+  font-feature-settings: 'ss01','cv11';
   -webkit-font-smoothing: antialiased;
 }
 .font-display {
@@ -37,6 +46,27 @@ body {
 .font-mono {
   font-family: var(--font-jetbrains, 'JetBrains Mono', ui-monospace, monospace) !important;
   font-feature-settings: 'tnum';
+}
+
+/* ── Hero header background ──────────────────────────────────────── */
+/* Gradiente radial verde + textura de líneas de cancha */
+.court-bg {
+  background:
+    radial-gradient(120% 80% at 50% -10%,
+      oklch(0.38 0.06 155) 0%,
+      var(--court) 55%,
+      var(--court-3) 100%);
+}
+.court-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+  pointer-events: none;
 }
 
 /* ── Utility classes from design ─────────────────────────────────── */

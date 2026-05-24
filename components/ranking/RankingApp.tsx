@@ -979,6 +979,7 @@ function PlayerListRow({ player, me, challenges, onOpenProfile, onChallenge }: {
           )}
         </div>
         <div className="mt-1 flex items-center gap-2">
+          <StreakDots streak={[]} />
           {busy && (
             <span className="chip" style={{ background: 'var(--clay-soft)', color: 'oklch(0.42 0.12 35)' }}>
               <Swords size={10} /> En curso
@@ -1134,68 +1135,78 @@ function RulesFooter() {
 // ─────────────────────────────────────────────────────────────────────────────
 // HeroHeader
 // ─────────────────────────────────────────────────────────────────────────────
+function ClubLogo() {
+  return (
+    <div className="w-9 h-9 rounded-[10px] flex items-center justify-center relative shrink-0"
+         style={{ background: 'white' }}>
+      <span className="font-display font-bold text-[15px]" style={{ color: 'var(--court)' }}>C</span>
+      <span className="absolute -right-0.5 -bottom-0.5 w-2 h-2 rounded-full"
+            style={{ background: 'var(--clay)' }} />
+    </div>
+  )
+}
+
 function HeroHeader({ me, temporadaNombre }: { me: PlayerRow | null; temporadaNombre: string }) {
   const firstName = me?.nombre.split(' ')[0] ?? ''
   return (
-    <div style={{ background: 'var(--court-3)' }}>
-      <div className="max-w-2xl mx-auto px-4 pt-5 pb-6">
+    <header className="court-bg relative overflow-hidden text-white">
+      <div className="relative max-w-2xl mx-auto px-4 pt-5 pb-6">
         {/* Club brand */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2.5">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center font-bold shrink-0"
-              style={{ background: 'var(--court-2)', color: 'white', fontSize: 16, fontFamily: 'var(--font-bricolage)' }}
-            >
-              C
-            </div>
-            <div>
-              <div className="text-[9px] uppercase tracking-[0.15em] font-mono"
-                   style={{ color: 'oklch(1 0 0 / 0.55)' }}>Club de Tenis</div>
-              <div className="font-bold text-[15px] leading-none"
-                   style={{ color: 'white', fontFamily: 'var(--font-bricolage)' }}>Codegua</div>
+            <ClubLogo />
+            <div className="leading-tight">
+              <div className="text-[11px] uppercase tracking-[0.18em] font-mono"
+                   style={{ color: 'oklch(1 0 0 / 0.70)' }}>Club de Tenis</div>
+              <div className="font-display text-[20px] font-semibold -mt-0.5">Codegua</div>
             </div>
           </div>
           <button
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ background: 'oklch(1 0 0 / 0.10)', color: 'oklch(1 0 0 / 0.75)', border: 'none', cursor: 'pointer' }}
+            className="relative w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ background: 'rgba(255,255,255,0.10)', border: 'none', cursor: 'pointer', color: 'white' }}
           >
-            <Bell size={17} />
+            <Bell size={16} />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full"
+                  style={{ background: 'var(--clay)' }} />
           </button>
         </div>
 
         {/* User greeting + position */}
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-[0.14em] font-mono mb-1.5"
-                 style={{ color: 'oklch(1 0 0 / 0.50)' }}>
+            <div className="text-[11px] uppercase tracking-[0.16em] font-mono mb-1"
+                 style={{ color: 'oklch(1 0 0 / 0.65)' }}>
               Escalerilla · {temporadaNombre}
             </div>
-            <div className="font-bold leading-tight truncate"
-                 style={{ fontSize: 26, fontFamily: 'var(--font-bricolage)', letterSpacing: '-0.02em', color: 'white' }}>
+            <h1 className="font-display text-[28px] font-semibold leading-tight truncate"
+                style={{ letterSpacing: '-0.02em' }}>
               {firstName ? `Hola, ${firstName}.` : 'Escalerilla'}
-            </div>
+            </h1>
           </div>
           {me && !me.paused && me.pos ? (
             <div className="text-right shrink-0">
-              <div className="font-bold tabular-nums leading-none"
-                   style={{ fontSize: 42, fontFamily: 'var(--font-bricolage)', letterSpacing: '-0.03em', color: 'white' }}>
+              <div className="font-display text-[34px] font-semibold leading-none tabular-nums">
                 #{me.pos}
               </div>
-              <div className="text-[10px] uppercase tracking-[0.14em] font-mono mt-0.5"
-                   style={{ color: 'oklch(1 0 0 / 0.55)' }}>
+              <div className="text-[11px] uppercase tracking-[0.14em] font-mono mt-1"
+                   style={{ color: 'oklch(1 0 0 / 0.65)' }}>
                 Cuadro {me.tier}
               </div>
             </div>
           ) : me?.paused ? (
-            <div className="shrink-0">
-              <span className="chip" style={{ background: 'oklch(1 0 0 / 0.12)', color: 'oklch(1 0 0 / 0.80)' }}>
-                <Snowflake size={11} /> En pausa
-              </span>
+            <div className="text-right shrink-0">
+              <div className="font-display text-[26px] font-semibold leading-none flex items-center gap-1.5 justify-end">
+                <Snowflake size={18} /> PAUSA
+              </div>
+              <div className="text-[11px] uppercase tracking-[0.14em] font-mono mt-1"
+                   style={{ color: 'oklch(1 0 0 / 0.65)' }}>
+                Congelado en #{me.frozenPos}
+              </div>
             </div>
           ) : null}
         </div>
       </div>
-    </div>
+    </header>
   )
 }
 
