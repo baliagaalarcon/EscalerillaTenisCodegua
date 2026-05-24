@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
   const password = formData.get('password') as string
   const redirectTo = (formData.get('redirectTo') as string) || '/ranking'
 
-  // Preparamos la respuesta de éxito con redirect
-  const successResponse = NextResponse.redirect(new URL(redirectTo, request.url))
+  // 303 See Other: convierte POST → GET en el redirect (evita HTTP 405)
+  const successResponse = NextResponse.redirect(new URL(redirectTo, request.url), { status: 303 })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (redirectTo !== '/ranking') {
       errorUrl.searchParams.set('redirectTo', redirectTo)
     }
-    return NextResponse.redirect(errorUrl)
+    return NextResponse.redirect(errorUrl, { status: 303 })
   }
 
   return successResponse
