@@ -20,15 +20,17 @@ function LoginForm() {
     setLoading(true)
     setError(null)
 
-    // Server action: login ocurre en el servidor, las cookies se setean
-    // antes del redirect — el middleware siempre reconoce la sesión
+    // Server action: login en el servidor → cookies seteadas correctamente
     const result = await loginAction(email, password, redirectTo)
 
     if (result?.error) {
       setError(result.error)
       setLoading(false)
+      return
     }
-    // Si no hay error, el server action hace redirect() automáticamente
+
+    // Hard navigation para cambiar el layout completo (auth → app)
+    window.location.href = redirectTo
   }
 
   return (

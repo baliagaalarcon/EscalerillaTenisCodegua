@@ -1,7 +1,6 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 
 export async function loginAction(email: string, password: string, redirectTo: string) {
   const supabase = await createClient()
@@ -12,6 +11,6 @@ export async function loginAction(email: string, password: string, redirectTo: s
     return { error: 'Email o contraseña incorrectos' }
   }
 
-  // El redirect ocurre en el servidor — las cookies ya están seteadas
-  redirect(redirectTo || '/ranking')
+  // Retornamos ok — el cliente hace window.location.href para cambiar el layout completo
+  return { ok: true }
 }
