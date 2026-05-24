@@ -3,49 +3,36 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { loginAction } from '@/app/actions/auth'
 
-// Componente interno que usa useSearchParams (debe estar dentro de Suspense)
+// Form POST nativo al Route Handler — el browser recibe las cookies + redirect
+// en una sola respuesta HTTP, garantizando que el middleware las reconoce.
 function LoginForm() {
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? '/ranking'
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const hasError = searchParams.get('error') === 'credentials'
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    // Server action: login en el servidor → cookies seteadas correctamente
-    const result = await loginAction(email, password, redirectTo)
-
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
-      return
-    }
-
-    // Hard navigation para cambiar el layout completo (auth → app)
-    window.location.href = redirectTo
-  }
 
   return (
-    <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+    <form
+      method="POST"
+      action="/api/auth/login"
+      onSubmit={() => setLoading(true)}
+      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4"
+    >
+      {/* redirectTo viaja como campo oculto */}
+      <input type="hidden" name="redirectTo" value={redirectTo} />
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Email
         </label>
         <input
           type="email"
+          name="email"
           className="input"
           placeholder="tu@email.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
       </div>
 
@@ -55,16 +42,18 @@ function LoginForm() {
         </label>
         <input
           type="password"
+          name="password"
           className="input"
           placeholder="••••••••"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
           required
+          autoComplete="current-password"
         />
       </div>
 
-      {error && (
-        <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+      {hasError && (
+        <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
+          Email o contraseña incorrectos
+        </p>
       )}
 
       <button type="submit" className="btn-primary w-full" disabled={loading}>
@@ -80,12 +69,10 @@ function LoginForm() {
   )
 }
 
-// Página principal — envuelve el formulario en Suspense (requerido por Next.js 14)
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm">
-        {/* Logo / Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-sky-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🎾</span>
