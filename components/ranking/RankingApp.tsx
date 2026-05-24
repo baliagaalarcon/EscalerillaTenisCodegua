@@ -1298,6 +1298,3 @@ export default function RankingApp({ players: initial, challenges: initialChalle
     </div>
   )
 }
-
-  )
-}
